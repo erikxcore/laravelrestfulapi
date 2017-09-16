@@ -21,7 +21,17 @@ Route::group(['prefix' => 'v1'], function ()
 {
 
 Route::get('getToken', 'UserProductController@returnToken');
-Route::post('getToken', 'UserProductController@returnToken');
+Route::get('getAllProducts', 'UserProductController@getAllProducts');
+
+Route::post('addProduct', 'UserProductController@addProduct');
+Route::post('getProduct', 'UserProductController@getProduct');
+Route::post('deleteProduct', 'UserProductController@deleteProduct');
+Route::post('updateProduct', 'UserProductController@updateProduct');
+Route::post('updateProductImage', 'UserProductController@updateProductImage');
+
+Route::post('addProductToUser', 'UserProductController@addProductToUser');
+Route::post('removeProductFromUser', 'UserProductController@removeProductFromUser');
+Route::get('listUserProducts', 'UserProductController@listUserProducts');
 
 });
 
