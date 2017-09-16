@@ -34,9 +34,3 @@ Route::post('removeProductFromUser', 'UserProductController@removeProductFromUse
 Route::get('listUserProducts', 'UserProductController@listUserProducts');
 
 });
-
-
-
-//Route::post('userproduct-v1.0.0/getToken', 'UserProductController@returnToken');
-
-//Route::get('userproduct-v1.0.0/getToken', 'UserProductController@returnToken');
