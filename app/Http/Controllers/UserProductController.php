@@ -22,10 +22,6 @@ class UserProductController extends Controller
 		return response()->json(Auth::guard('api')->user()->api_token);
 	}
 
-	public function getAllProducts(Request $request){
-		return response()->json(Product::all());
-	}
-
 	//Token Required for below methods
 
 	//Product CRUD
@@ -137,6 +133,10 @@ class UserProductController extends Controller
 		}	
 	}
 
+	public function getAllProducts(Request $request){
+		return response()->json(Product::all());
+	}
+	
 	public function deleteProduct(Request $request){
 		$content = $request->getContent();
 	    if (!empty($content)){
@@ -202,16 +202,72 @@ class UserProductController extends Controller
 
 	//User-Product Relationships
 
-	// public function addProductToUser(Request $request){
-		
-	// }
+	public function addProductToUser(Request $request){
+		$content = $request->getContent();
+		    if (!empty($content)){
+		     if(!json_decode($content,true)){
+				return response()->json(['error' => 'Please provide valid JSON.'], 400);
+		     }else{
+		     	$content = json_decode($content,true);
+		     }
+		    }else{
+				return response()->json(['error' => 'Please provide JSON.'], 400);
+		    }		
+			$userJson = $content;
+				if(isset($userJson['product'])){
+					if(isset($userJson['product']['id'])){
+						$product = Product::where('id', $userJson['product']['id'])->first();
+						if($product) {
+							UserProduct::create(array(
+							        'user_id' => Auth::guard('api')->user()->id,
+							        'product_id' => $product->id,
+							    ));
+						    return response()->json(['Success' => 'Product added.'], 200);
+						}else{
+						    return response()->json(['Error' => 'Product does not exist.'], 400);
+						}
+					}
+				}
+			return response()->json(['error' => 'Please provide JSON.'], 400);
+	}
 
-	// public function removeProductFromUser(Request $request){
-		
-	// }
+	public function removeProductFromUser(Request $request){
+		$content = $request->getContent();
+		    if (!empty($content)){
+		     if(!json_decode($content,true)){
+				return response()->json(['error' => 'Please provide valid JSON.'], 400);
+		     }else{
+		     	$content = json_decode($content,true);
+		     }
+		    }else{
+				return response()->json(['error' => 'Please provide JSON.'], 400);
+		    }		
+			$userJson = $content;
+				if(isset($userJson['product'])){
+					if(isset($userJson['product']['id'])){
+						$product = UserProduct::where('user_id','=',Auth::guard('api')->user()->id)
+						->where('product_id','=',$userJson['product']['id'])->first();
+						if($product) {
+							$product->delete();
+						    return response()->json(['Success' => 'Product deleted.'], 200);
+						}else{
+						    return response()->json(['Success' => 'User does not have that product.'], 200);
+						}
+					}
+				}
+			return response()->json(['error' => 'Please provide JSON.'], 400);
+	}
 
-	// public function listUserProducts(Request $request){
-		
-	// }
+	public function listUserProducts(Request $request){
+		//$user = User::where('id','=',Auth::guard('api')->user()->id)->first();
+		//$userLibrary = $user->products();
+		$userProducts = UserProduct::where('user_id','=',Auth::guard('api')->user()->id)->get();
+		$userLibrary = array();
+		foreach($userProducts as $userProduct){
+			$tempProduct = Product::where('id','=',$userProduct->product_id)->first();
+			array_push($userLibrary,$tempProduct);
+		}
+		return response()->json($userLibrary);
+	}
 
 }

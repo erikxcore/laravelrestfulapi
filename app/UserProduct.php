@@ -10,7 +10,11 @@ class UserProduct extends Model
         'user_id', 'product_id'
     ];
 
-    public function bear() {
-        return $this->belongsTo('User');
-    }
-}
+    // public function user() {
+    // 	return $this->belongsTo('App\User', 'id','user_id');
+    // }
+
+    // public function product() {
+    // 	return $this->belongsTo('App\Product', 'id','product_id');
+    // }
+}	
