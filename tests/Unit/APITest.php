@@ -20,71 +20,54 @@ class APITest extends TestCase
           '--seed' => '1'
         ]);
 
-        $user = User::find(1);
-        $this->actingAs($user);
-
     }
 
-    public function testMustBeAuthenticated()
-    {
-        $response = $this->call('GET', '/ordermanagement');
-        $this->assertInstanceOf('Illuminate\Http\RedirectResponse', $response);
-        $this->assertEquals($this->baseUrl . '/login' , $response->getTargetUrl());
-    }
 
-   // public function test_search_index()
-   //  {
-   //      $response = $this->call('GET', '/ordermanagement');
-   //      View::shouldReceive('make')->with('app.ordermanagement');
-   //  }
+public function test_unauth()
+{
 
-   // public function test_post_find_account()
-   //  {
-   //      $data = [
-   //          'billingSystemAccountNumber' => '3000300030003000'
-   //      ];
+    $response = $this->json('GET', '/api/v1/getAllProducts');
 
-   //      $response = $this->call('POST', '/ordermanagement/findaccount', $data);
+    $response   ->assertStatus(401);
+    
+}
 
-   //      $data = $this->parseJson($response);
-   //      $this->assertIsJson($data);
-   //  }
+public function test_get_all_products(){
 
-   // public function test_post_find_account_products()
-   //  {
-   //      $data = [
-   //          'billingSystemAccountNumber' => '3000300030003000'
-   //      ];
+    $user = User::find(1);
 
-   //      $response = $this->call('POST', '/ordermanagement/findaccountproducts', $data);
+    $response= $this->get('api/v1/getAllProducts', 
+      [
+      'Authorization' => 'Bearer ' . $user->api_token,
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json'
+      ]);
 
-   //      $data = $this->parseJson($response);
-   //      $this->assertIsJson($data);
-   //  }
+    $response   ->assertStatus(200);
 
-   // public function test_post_find_account_orders()
-   //  {
-   //      $data = [
-   //          'billingSystemAccountNumber' => '3000300030003000'
-   //      ];
+}
 
-   //      $response = $this->call('POST', '/ordermanagement/findaccountorders', $data);
+public function test_get_product(){
 
-   //      $data = $this->parseJson($response);
-   //      $this->assertIsJson($data);
-   //  }
+    $user = User::find(1);
 
-   // public function test_post_find_account_history()
-   //  {
-   //      $data = [
-   //          'billingSystemAccountNumber' => '3000300030003000'
-   //      ];
+    $jsonObj = array();
+    $jsonObj['product'] = array();
+    $jsonObj['product']['id'] = 1;
 
-   //      $response = $this->call('POST', '/ordermanagement/findaccounthistory', $data);
+    $response = $this->call('POST', 'api/v1/getProduct',[],[],[], 
+      [
+      'HTTP_Authorization' => 'Bearer ' . $user->api_token,
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json'
+      ],
+      $json = json_encode($jsonObj)
+      );
 
-   //      $data = $this->parseJson($response);
-   //      $this->assertIsJson($data);
-   //  }
+    $response   ->assertStatus(200);
+
+}
+
 
    protected function parseJson(Illuminate\Http\JsonResponse $response)
     {
