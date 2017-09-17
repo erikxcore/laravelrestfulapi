@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->timestamps();
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('api_token', 60)->unique();
+            $table->text('api_token', 60)->unique();
         });
     }
 
